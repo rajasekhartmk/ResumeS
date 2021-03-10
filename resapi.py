@@ -25,11 +25,7 @@ from flask_restful import Resource, Api, reqparse
 
 resapi = Flask(__name__)
 api = Api(resapi)
-resumes_path = "C:/Users/manikotarajas.tumul/HCL Technologies Ltd/MY_PULSE - Resume-Screening/Resumes_Screenable/Reject cases"
-csv_path="C:/Users/manikotarajas.tumul/HCL Technologies Ltd/MY_PULSE - Resume-Screening/Dataset_With_Roles/res_lower.csv"
-generated_excel_path="C:/Users/manikotarajas.tumul/HCL Technologies Ltd/MY_PULSE - Resume-Screening/Result_Sheet/sample.csv"
-graph_path="C:/Users/manikotarajas.tumul/HCL Technologies Ltd/MY_PULSE - Resume-Screening/Graph/graph.pdf"
-graph_path_png="C:/Users/manikotarajas.tumul/HCL Technologies Ltd/MY_PULSE - Resume-Screening/Graph/graph.png"
+
 class ResumeScreen(Resource):
 
     def get(self):
@@ -62,7 +58,7 @@ class ResumeScreen(Resource):
             return abs_path
 
         print("\n")
-        folder = resumes_path
+        folder = "C:/Users/manikotarajas.tumul/HCL Technologies Ltd/MYCO - check/resume/Reject cases"
         # Change the directory.
         chdir(folder)
         # Count the number of docx and doc files in the specified folder.
@@ -114,7 +110,7 @@ class ResumeScreen(Resource):
             print("\nNumber of doc and docx files is not equal to number of pdf files.")
         # ----------------------------------------------------------------------------------------
 
-        dir_name = resumes_path
+        dir_name = "C:/Users/manikotarajas.tumul/HCL Technologies Ltd/MYCO - check/resume/Reject cases"
         test = os.listdir(dir_name)
         for item in test:
             if item.endswith(".doc"):
@@ -125,7 +121,7 @@ class ResumeScreen(Resource):
                 continue
 
         # Function to read resumes from the folder one by one
-        mypath = resumes_path  # enter your path here where you saved the resumes
+        mypath = 'C:/Users/manikotarajas.tumul/HCL Technologies Ltd/MYCO - check/resume/Reject cases'  # enter your path here where you saved the resumes
         onlyfiles = [os.path.join(mypath, f) for f in os.listdir(mypath) if os.path.isfile(os.path.join(mypath, f))]
 
         def pdfextract(file):
@@ -151,7 +147,8 @@ class ResumeScreen(Resource):
             text = text.replace("\\n", "")
             text = text.lower()
             # below is the csv where we have all the keywords, you can customize your own
-            keyword_dict = pd.read_csv(csv_path)
+            keyword_dict = pd.read_csv(
+                'C:/Users/manikotarajas.tumul/HCL Technologies Ltd/MYCO - check/csv_database/res_lower.csv')
             dotnet_assi = [nlp(text) for text in keyword_dict['.NetAssisted'].dropna(axis=0)]
             dotnet_dire = [nlp(text) for text in keyword_dict['.NetDirectProducts'].dropna(axis=0)]
             dotnet_sql = [nlp(text) for text in keyword_dict['.NetSDLLeadDeveloper'].dropna(axis=0)]
@@ -250,9 +247,9 @@ class ResumeScreen(Resource):
         final_database2.fillna(0, inplace=True)
         new_data = final_database2.iloc[:, 1:]
         new_data.index = final_database2['Candidate Name']
-        json=new_data.to_json()
+        #json=new_data.to_json()
         # execute the below line if you want to see the candidate profile in a csv format
-        sample2 = new_data.to_csv(generated_excel_path)
+        sample2 = new_data.to_csv('C:/Users/manikotarajas.tumul/HCL Technologies Ltd/MYCO - check/sample/sample.csv')
         import matplotlib.pyplot as plt
 
         plt.rcParams.update({'font.size': 5})
@@ -270,15 +267,11 @@ class ResumeScreen(Resource):
                 y = rect.get_y()
                 height = rect.get_height()
                 ax.text(x + width / 2., y + height / 2., label, ha='center', va='center')
-        plt.savefig(graph_path)
-        plt.savefig(graph_path_png)
-        return json
+        plt.savefig("C:/Users/manikotarajas.tumul/HCL Technologies Ltd/MYCO - check/graph/graph.png")
+        plt.savefig("C:/Users/manikotarajas.tumul/HCL Technologies Ltd/MYCO - check/graph/graph.pdf")
+        return 200
 
 api.add_resource(ResumeScreen, '/check/')
 
 if __name__ == "__main__":
   resapi.run(debug=True)
-
-
-
-
